@@ -1,11 +1,8 @@
 import requests
 import lxml
-import pprint
 from bs4 import BeautifulSoup
-#import pandas as pd
 
 # site a ser iterado https://sistemas.anac.gov.br/certificacao/AvGeral/AIR145BasesDetail.asp?B145Codi=0000000001 to 0000001500
-
 
 def webscraper():
   i = 1
@@ -29,18 +26,22 @@ def webscraper():
     for tag in tabela_basica: 
       tag.attrs = None
 
-    print (len(tabela_basica)) #teste para verificar a quantidade de itens na tabela
-    
-    #imprime a posição e cada item da posição na tabela
-    nova_tabela = []
+    #cria listas para iteração
+      nova_lista = []
+      new_list = []
+      
+    #move os conteudos para nova lista sem as tags
     for i in tabela_basica:
-      nova_tabela.append((i.get_text("'", strip=True)))
+      nova_lista.append((i.get_text(",", strip=True)))
 
-    #adiciona a lista na posição do dicionário de acordo com o número do endereço do fornecedor
-    dicio_fornecedores[x] = nova_tabela
-    x+=1
-    #print (tabela_basica)
-    print ("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\")
-  pprint.pprint(dicio_fornecedores)
+    #remove '\xa0' e divide a string
+    for i in  nova_lista:
+      new_list.extend(i.split('\xa0'))
 
-webscraper()
+    #troca ',' por '-'
+    for i in range(len(new_list)):
+      new_list[i] = new_list[i].replace(',',' -')
+
+    #adiciona a lista na posição do dicionário de acordo com o número do endereço do fornecedor (-1)
+    file.write(str(new_list).replace("'","").replace("[","").replace(";","").replace(":","")+ '\n')
+    
