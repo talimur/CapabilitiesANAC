@@ -5,13 +5,12 @@ from bs4 import BeautifulSoup
 
 # site a ser iterado https://sistemas.anac.gov.br/certificacao/AvGeral/AIR145BasesDetail.asp?B145Codi=0000000001 to 0000001500
 
-
 def webscraper():
   i = 1
    
   #roda atraves dos numeros de fornecedor
   with open("output.csv", "w") as file:
-    for i in range(i,10):
+    for i in range(i,101):
       
       pagina = requests.get(("https://sistemas.anac.gov.br/certificacao/AvGeral/AIR145BasesDetail.asp?B145Codi=000000"+ str('%04d'%i)))
       print (i)
@@ -24,6 +23,11 @@ def webscraper():
       #pega apenas os campos da tabela que tem atributos de texto
       tabela_basica = tables[3].findAll('font')
 
+      #pegar link do capability / EO
+      #for i in range(len(tables)):
+      #  td = tables[3].find_all("a")[-1].get('href')
+      #  td = 'https://sistemas.anac.gov.br/certificacao/AvGeral/'+td
+
       #limpa as tags da tabela
       for tag in tabela_basica: 
         tag.attrs = None
@@ -31,7 +35,7 @@ def webscraper():
       #cria listas para iteração
       nova_lista = []
       new_list = []
-      
+
       #move os conteudos para nova lista sem as tags
       for i in tabela_basica:
         nova_lista.append((i.get_text(",", strip=True)))
@@ -46,9 +50,12 @@ def webscraper():
       
       #checa se existe o protocolo e a data de homologação
       if not new_list[2].startswith("::"):
-        new_list.insert(2,'::')
-
+        new_list.insert(2,'**')
+      if not new_list[3].startswith("("):
+        new_list.insert(3,'**')
       #adiciona a lista na posição do dicionário de acordo com o número do endereço do fornecedor
-      file.write(str(new_list).replace("'","").replace("[","").replace(";","").replace(":","")+ '\n')
+      #new_list.append(td)
+      file.write(str(new_list).replace("'","").replace("[","").replace(";","").replace("::","")+ '\n')
+  file.close()
 
 webscraper()
