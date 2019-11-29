@@ -3,14 +3,15 @@ import requests
 import lxml
 from bs4 import BeautifulSoup
 
+#webscraper para baixar as paginas de fornecedores da ANAC, e seu status de cadastro
 # site a ser iterado https://sistemas.anac.gov.br/certificacao/AvGeral/AIR145BasesDetail.asp?B145Codi=0000000001 to 0000001500
 
 def webscraper():
   i = 1
    
   #roda atraves dos numeros de fornecedor
-  with open("output.csv", "w") as file:
-    for i in range(i,101):
+  with open("fornecedores.csv", "w") as file:
+    for i in range(i,1501):
       
       pagina = requests.get(("https://sistemas.anac.gov.br/certificacao/AvGeral/AIR145BasesDetail.asp?B145Codi=000000"+ str('%04d'%i)))
       print (i)
@@ -22,11 +23,6 @@ def webscraper():
 
       #pega apenas os campos da tabela que tem atributos de texto
       tabela_basica = tables[3].findAll('font')
-
-      #pegar link do capability / EO
-      #for i in range(len(tables)):
-      #  td = tables[3].find_all("a")[-1].get('href')
-      #  td = 'https://sistemas.anac.gov.br/certificacao/AvGeral/'+td
 
       #limpa as tags da tabela
       for tag in tabela_basica: 
